@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  python-gui-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python_graphic_interface
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+    volumes:
+      # Monta o socket X11 para GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Monta o diretório do projeto para desenvolvimento
+      - .:/app
+      # Compartilha o arquivo de autorização X11
+      - ${HOME}/.Xauthority:/home/appuser/.Xauthority:ro
+    network_mode: host
+    stdin_open: true
+    tty: true
+    # Política de restart
+    restart: unless-stopped
+    # Comando personalizado para desenvolvimento
+    command: python3 main.py
+
+  # Serviço alternativo com Xvfb (display virtual)
+  python-gui-app-headless:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python_graphic_interface_headless
+    environment:
+      - DISPLAY=:99
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - .:/app
+    command: >
+      bash -c "Xvfb :99 -screen 0 1024x768x24 &
+               sleep 2 &&
+               python3 main.py"
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  # Serviço para desenvolvimento com hot reload
+  python-gui-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python_graphic_interface_dev
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - PYTHONPATH=/app
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - .:/app
+      - ${HOME}/.Xauthority:/home/appuser/.Xauthority:ro
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: >
+      bash -c "while true; do
+                 python3 main.py;
+                 echo 'Aplicação encerrada. Pressione Ctrl+C para sair ou aguarde reinício...';
+                 sleep 3;
+               done"
+    restart: unless-stopped
+
