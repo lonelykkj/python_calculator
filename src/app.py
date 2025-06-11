@@ -8,6 +8,6 @@ app = ctk.CTk()
 app.title("Calculadora")
 app.geometry("300x400")
 
-CalculatorUI(app, calcular_callback=calcular).pack(expand=True)
+CalculatorUI(app, calcular_callback=calcular).pack(expand=True, fill="both")
 
 app.mainloop()

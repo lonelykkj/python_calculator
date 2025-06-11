@@ -3,10 +3,15 @@ import customtkinter as ctk
 class CalculatorUI(ctk.CTkFrame):
     def __init__(self, master, calcular_callback):
         super().__init__(master)
-        # self.grid(padx=20, pady=20)
-        self.display = ctk.CTkEntry(self, width=240, font=("Arial", 24))
-        self.display.grid(row=0, column=0, columnspan=4, pady=10)
         self.calcular_callback = calcular_callback
+
+        for i in range(6):  
+            self.rowconfigure(i, weight=1)
+        for j in range(4):
+            self.columnconfigure(j, weight=1)
+
+        self.display = ctk.CTkEntry(self, font=("Arial", 24))
+        self.display.grid(row=0, column=0, columnspan=4, sticky="nsew", pady=10, padx=5)
         self._criar_botoes()
 
     def _criar_botoes(self):
@@ -18,8 +23,8 @@ class CalculatorUI(ctk.CTkFrame):
             ("C", 5, 0)
         ]
         for (texto, linha, coluna) in botoes:
-            btn = ctk.CTkButton(self, text=texto, width=50, height=45, command=lambda t=texto: self._on_click(t))
-            btn.grid(row=linha, column=coluna, padx=5, pady=5)
+            btn = ctk.CTkButton(self, text=texto, command=lambda t=texto: self._on_click(t))
+            btn.grid(row=linha, column=coluna, sticky="nsew", padx=5, pady=5)
     def _on_click(self, texto):
         if texto == "=":
             resultado = self.calcular_callback(self.display.get())
