@@ -16,11 +16,11 @@ class CalculatorUI(ctk.CTkFrame):
 
     def _criar_botoes(self):
         botoes = [
-            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("C", 1, 3),
-            ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("=", 2, 3),
+            ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("⌫", 1, 3),
+            ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("C", 2, 3),
             ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
             ("0", 4, 0), ("/", 4, 1), ("*", 4, 2), ("+", 4, 3),
-            ("√", 5, 0), ("^", 5, 1), (".", 5, 2)
+            ("√", 5, 0), ("^", 5, 1), (".", 5, 2), ("=", 5, 3)
         ]
         for (texto, linha, coluna) in botoes:
             btn = ctk.CTkButton(self, text=texto, command=lambda t=texto: self._on_click(t))
@@ -33,6 +33,10 @@ class CalculatorUI(ctk.CTkFrame):
             self.display.insert('end', resultado)
         elif texto == "C":
             self.display.delete(0, 'end')
+        elif texto == "⌫":
+            valor_atual = self.display.get()
+            if valor_atual:
+                self.display.delete(len(valor_atual)-1, 'end')
         elif texto == "√":
             valor = self.display.get()
             if valor:
